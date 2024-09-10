@@ -10,16 +10,23 @@ public class BallObject : CircleBaseObject
 
     private Vector2 _velocity;
 
-    private CircleObject[] _allCircles;
+    private CircleBaseObject[] _allCircles;
     private BallMovement _ballMovement;
     private CollisionEventContainer _collisionEventContainer;
+    private BubblePopResultantContainer _bubblePopResultantContainer;
+    private HealthSystem _healthSystem;
 
+    public HealthSystem HealthSystem => _healthSystem;
+    public BubblePopResultantContainer BallPopResultantContainer => _bubblePopResultantContainer;
     public CollisionEventContainer CollisionEventContainer => _collisionEventContainer;
-    public CircleObject[] AllCircles => _allCircles;
+    public CircleBaseObject[] AllCircles => _allCircles;
+    public bool IsMove => _ballMovement.IsMoveStarted;
 
-    public void Init(CircleObject[] allCircles, CollisionEventContainer collisionEventContainer)
+    public void Init(CircleBaseObject[] allCircles, CollisionEventContainer collisionEventContainer, BubblePopResultantContainer bubblePopResultantContainer, HealthSystem healthSystem)
     {
+        _bubblePopResultantContainer = bubblePopResultantContainer;
         _collisionEventContainer = collisionEventContainer;
+        _healthSystem = healthSystem;
         _allCircles = allCircles;
         _velocity = Vector2.up;
         _ballMovement = new BallMovement(this, _borders, _paddle, _velocity, _startSpeed);
@@ -30,13 +37,15 @@ public class BallObject : CircleBaseObject
     public void CustomUpdate()
     {
         _ballMovement.CustomUpdate();
+        _circleMeshGenerator.CustomUpdate();
     }
     public void StartMove()
     {
+        _velocity = Vector2.up;
         _ballMovement.StarMove(true);
     }
 
-    protected override CircleObject[] GetAllCircles()
+    protected override CircleBaseObject[] GetAllCircles()
     {
         return _allCircles;
     }

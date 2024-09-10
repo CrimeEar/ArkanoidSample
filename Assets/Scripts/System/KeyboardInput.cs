@@ -5,6 +5,8 @@ using UnityEngine;
 public class KeyboardInput
 {
     public Vector2 InputDelta;
+
+    public bool SpaceTapped;
     public KeyboardInput()
     {
 
@@ -22,5 +24,7 @@ public class KeyboardInput
         {
             InputDelta += Vector2.right;
         }
+
+        SpaceTapped = Input.GetKey(KeyCode.Space);
     }
 }

@@ -3,10 +3,13 @@ using UnityEngine;
 
 public class HealthUI : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI _tmHealth;
+    [SerializeField] private GameObject[] _healthIcons;
 
-    public void OnChangeHealth(int health)
+    public void OnUpdateHealthUI(int health)
     {
-        _tmHealth.text = $"{health}";
+        for(int i = 0; i < _healthIcons.Length; i++)
+        {
+            _healthIcons[i].SetActive(i + 1 <= health);
+        }
     }
 }

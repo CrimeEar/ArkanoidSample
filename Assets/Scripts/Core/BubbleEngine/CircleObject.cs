@@ -9,20 +9,27 @@ public class CircleObject : CircleBaseObject
     [SerializeField] private Vector2 _changePositionDelayRange;
 
     private RandomMovement _circleMovement;
+    private BubblesHandler _bubblesHandler;
+    private BubblePopResultantContainer _bubblePopResultantContainer;
 
     private float startDelay = 0f;
+    private bool _isShowed;
 
     public float MoveSpeed => _moveSpeed;
     public RandomMovement CircleMovement => _circleMovement;
 
-    public void Init(BubblesHandler bubblesHandler, Line startLine)
+    public void Init(BubblesHandler bubblesHandler, Line startLine, BubblePopResultantContainer bubblePopResultantContainer)
     {
+        _bubblePopResultantContainer = bubblePopResultantContainer;
+        _bubblesHandler = bubblesHandler;
+
         InitCircleMeshGenerator(bubblesHandler);
 
         _circleMovement = new RandomMovement(bubblesHandler, this, Radius, MoveSpeed, _movementOffset, _changePositionDelayRange);
         Vector2 closestPointOnLine = GetClosestPointOnLineAndStartDelay(startLine, transform.position);
         _circleMovement.SetPosition(closestPointOnLine);
         _isDestroyed = false;
+        _isShowed = false;
     }
 
     public void CustomUpdate(float timeT)
@@ -31,14 +38,20 @@ public class CircleObject : CircleBaseObject
         {
             return;
         }
+        if (!_isShowed)
+        {
+            _isShowed = true;
+            float pitch = 0.75f + 0.5f * (1f - Radius / 1.5f); // TEMP
+            SoundSystem.Instance.PlaySound(AudioName.Show, pitch);
+        }
 
         _circleMovement.CustomUpdate();
         _circleMeshGenerator.CustomUpdate();
     }
-    public void PopIt()
+    public override void AddMoveVector(Vector3 vectorAdd)
     {
-        _isDestroyed = true;
-        _circleMeshGenerator.Hide();
+        base.AddMoveVector(vectorAdd);
+        _circleMovement.AddMove(vectorAdd);
     }
     private Vector2 GetClosestPointOnLineAndStartDelay(Line line, Vector2 point)
     {
@@ -57,9 +70,9 @@ public class CircleObject : CircleBaseObject
         return closestPoint;
     }
 
-    protected override CircleObject[] GetAllCircles()
+    protected override CircleBaseObject[] GetAllCircles()
     {
-        return new CircleObject[] { this };
+        return _bubblesHandler.AllBaseCircles;
     }
 
 #if UNITY_EDITOR

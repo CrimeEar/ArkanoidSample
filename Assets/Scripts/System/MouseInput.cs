@@ -23,7 +23,7 @@ public class MouseInput
     {
         Vector2 currentMousePosition = GetNormalizedMousePosition();
 
-        InputDelta = currentMousePosition - _previousMousePosition;
+        InputDelta = (currentMousePosition - _previousMousePosition) / Time.deltaTime;
 
         _previousMousePosition = currentMousePosition;
 
@@ -35,6 +35,7 @@ public class MouseInput
     {
         return new Vector2(Input.mousePosition.x / _screenSize.x, Input.mousePosition.y / _screenSize.y);
     }
+
     private Vector2 GetMouseWorldPosition()
     {
         return _mainCamera.ScreenToWorldPoint(Input.mousePosition);

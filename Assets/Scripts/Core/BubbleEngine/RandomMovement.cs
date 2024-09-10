@@ -39,7 +39,13 @@ public class RandomMovement
     {
         MoveUpdate();
     }
-
+    public void AddMove(Vector2 addMoveVector)
+    {
+        for(int i = 0; i < randomMovePositions.Length; i++)
+        {
+            randomMovePositions[i] += addMoveVector;
+        }
+    }
     public void SetPosition(Vector2 position)
     {
         circleObject.transform.localPosition = position;
@@ -58,6 +64,22 @@ public class RandomMovement
             moveSpeed = 0.5f;
         }
 
-        circleObject.transform.localPosition = Vector2.Lerp(circleObject.transform.localPosition, newLocalPosition, Time.deltaTime * moveSpeed);
+        Vector2 resultanceLocal = Vector2.zero;
+        if (bubblesHandler.BubblePopResultantContainer != null)
+        {
+            resultanceLocal = bubblesHandler.BubblePopResultantContainer.Resultant;
+            if (resultanceLocal != Vector2.zero)
+            {
+                resultanceLocal = circleObject.transform.InverseTransformPoint(resultanceLocal);
+                float distance = Vector2.Distance(resultanceLocal, startLocalPosition);
+
+                float forceFactor = bubblesHandler.BubblePopResultantContainer.ResultantForceValue / (distance + 1f);
+                forceFactor = Mathf.Clamp(forceFactor, 0f, 0.4f);
+
+                resultanceLocal = forceFactor * (resultanceLocal - startLocalPosition).normalized;
+            }
+        }
+
+        circleObject.transform.localPosition = Vector2.Lerp(circleObject.transform.localPosition, newLocalPosition + resultanceLocal, Time.deltaTime * moveSpeed);
     }
 }

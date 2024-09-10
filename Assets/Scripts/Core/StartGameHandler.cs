@@ -3,6 +3,7 @@ using UnityEngine;
 public class StartGameHandler
 {
     private const int GAME_STATE_INDEX = 1;
+    private const float PITCH_BUTTON = 0.95f;
 
     private CircleObject _circleObject;
     private InputSystem _inputSystem;
@@ -16,6 +17,7 @@ public class StartGameHandler
         if (IsTapOnCircle())
         {
             GameStateMachine.Instance.StartNewState(GAME_STATE_INDEX);
+            SoundSystem.Instance.PlaySound(AudioName.StartMenu, PITCH_BUTTON);
         }
     }
 

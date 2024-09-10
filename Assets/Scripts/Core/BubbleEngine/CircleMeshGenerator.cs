@@ -1,91 +1,97 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CircleMeshGenerator
 {
-    public float Radius = 1f;
-    public int Segments = 36;
-    public Color GizmoColor = Color.white;
+    public float radius = 0.01f;
+    public int segments = 36;
+    public Color gizmoColor = Color.white;
+    public float pumpSpeed = 1f;
     public Transform CurrentTransform;
 
-    private MeshFilter _meshFilter;
-    private Mesh _mesh;
+    private MeshFilter meshFilter;
+    private Mesh mesh;
+    private Vector2[] baseVertices;
+    private Vector3[] vertices;
+    private Vector2[] uv;
+    private int[] triangles;
 
-    private Vector2[] _baseVertices;
-    private Vector3[] _vertices;
-    private Vector2[] _uv;
-    private int[] _triangles;
-
-    public CircleMeshGenerator(BubblesHandler bubbleHandler, CircleBaseObject circleObject, MeshFilter meshFilter, CircleObject[] allCircles)
+    public CircleMeshGenerator(BubblesHandler bubbleHandler, CircleBaseObject circleObject, MeshFilter meshFilter, CircleBaseObject[] allCircles)
     {
-        this._meshFilter = meshFilter;
-        
-        this.Radius = circleObject.Radius;
-        this.CurrentTransform = circleObject.transform;
+        this.meshFilter = meshFilter;
 
-        if (_mesh == null)
+        radius = circleObject.Radius;
+        CurrentTransform = circleObject.transform;
+
+        if (mesh == null)
         {
-            _mesh = new Mesh();
-            _mesh.MarkDynamic();
+            mesh = new Mesh();
+            mesh.MarkDynamic();
         }
-        meshFilter.mesh = _mesh;
+        meshFilter.mesh = mesh;
 
-        GenerateCircle();
-    }
-    public void Hide()
-    {
-        Radius = 0f;
         GenerateCircle();
     }
     public void CustomUpdate()
     {
-        // redraw mesh if need to
+        
     }
 
     private void GenerateCircle()
     {
-        if (_baseVertices == null || _baseVertices.Length != Segments + 1)
+        if (baseVertices == null || baseVertices.Length != segments + 1)
         {
-            _baseVertices = new Vector2[Segments + 1];
-            _vertices = new Vector3[Segments + 1];
-            _uv = new Vector2[Segments + 1];
-            _triangles = new int[Segments * 3];
+            baseVertices = new Vector2[segments + 1];
+            vertices = new Vector3[segments + 1];
+            uv = new Vector2[segments + 1];
+            triangles = new int[segments * 3];
         }
 
-        _baseVertices[0] = Vector2.zero;
-        _uv[0] = new Vector2(0.5f, 0.5f);
+        baseVertices[0] = Vector2.zero;
+        uv[0] = new Vector2(0.5f, 0.5f);
 
-        float angleStep = 360f / Segments;
+        float angleStep = 360f / segments;
 
-        for (int i = 0; i < Segments; i++)
+        for (int i = 0; i < segments; i++)
         {
             float angle = i * angleStep * Mathf.Deg2Rad;
-            float x = Mathf.Cos(angle) * Radius;
-            float y = Mathf.Sin(angle) * Radius;
-            _baseVertices[i + 1] = new Vector2(x, y);
-            _vertices[i + 1] = new Vector3(x, y, 0);
+            float x = Mathf.Cos(angle) * radius;
+            float y = Mathf.Sin(angle) * radius;
+            baseVertices[i + 1] = new Vector2(x, y);
+            vertices[i + 1] = new Vector3(x, y, 0);
 
             float u = (Mathf.Cos(angle) + 1f) / 2f;
             float v = (Mathf.Sin(angle) + 1f) / 2f;
-            _uv[i + 1] = new Vector2(u, v);
+            uv[i + 1] = new Vector2(u, v);
 
-            if (i < Segments - 1)
+            if (i < segments - 1)
             {
-                _triangles[i * 3] = 0;
-                _triangles[i * 3 + 1] = i + 2;
-                _triangles[i * 3 + 2] = i + 1;
+                triangles[i * 3] = 0;
+                triangles[i * 3 + 1] = i + 2;
+                triangles[i * 3 + 2] = i + 1;
             }
             else
             {
-                _triangles[i * 3] = 0;
-                _triangles[i * 3 + 1] = 1;
-                _triangles[i * 3 + 2] = i + 1;
+                triangles[i * 3] = 0;
+                triangles[i * 3 + 1] = 1;
+                triangles[i * 3 + 2] = i + 1;
             }
         }
 
-        _mesh.Clear();
-        _mesh.vertices = _vertices;
-        _mesh.triangles = _triangles;
-        _mesh.uv = _uv;
-        _mesh.RecalculateNormals();
+        mesh.Clear();
+        mesh.vertices = vertices;
+        mesh.triangles = triangles;
+        mesh.uv = uv;
+        mesh.RecalculateNormals();
+    }
+
+    public void Hide()
+    {
+        radius = 0f;
+        GenerateCircle();
+    }
+    public void RedrawMesh()
+    {
+        mesh.vertices = vertices;
     }
 }

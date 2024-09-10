@@ -15,7 +15,7 @@ public class InputSystem : MonoBehaviour
     {
         get { return _currentInputX; }
     }
-    public bool IsMouseClicked => _mouseInput.IsMouseClicked;
+    public bool IsMouseClicked => _mouseInput.IsMouseClicked || _keyboardInput.SpaceTapped;
     public Vector2 MouseWorldPosition => _mouseInput.MouseWorldPosition;
 
     public void Init()

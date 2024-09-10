@@ -9,6 +9,7 @@ public abstract class CircleBaseObject : MonoBehaviour, ICollisioned
     protected bool _isDestroyed;
     public bool IsDestroyed => _isDestroyed;
     public float Radius => _radius;
+    public Color GizmoColor => _gizmoColor;
 
     protected CircleMeshGenerator _circleMeshGenerator;
 
@@ -20,7 +21,16 @@ public abstract class CircleBaseObject : MonoBehaviour, ICollisioned
         _circleMeshGenerator = new CircleMeshGenerator(bubblesHandler, this, meshFilter, GetAllCircles());
     }
 
-    protected abstract CircleObject[] GetAllCircles();
+    protected abstract CircleBaseObject[] GetAllCircles();
+    public virtual void PopIt()
+    {
+        _isDestroyed = true;
+        _circleMeshGenerator.Hide();
+    }
+    public virtual void AddMoveVector(Vector3 addVector)
+    {
+
+    }
 
 #if UNITY_EDITOR
     protected virtual void OnDrawGizmos()

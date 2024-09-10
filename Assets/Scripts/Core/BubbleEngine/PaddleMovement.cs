@@ -66,7 +66,7 @@ public class PaddleMovement
     {
         TryKillTween();
 
-        _punchTween = DOVirtual.Float(_startYPosition, _startYPosition - ON_COLLSIION_MOVE_VALUE, ON_COLLISION_MOVE_DURATION, OnPunchUpdate).SetLoops(2, LoopType.Yoyo).SetEase(Ease.OutSine);
+        _punchTween = DOVirtual.Float(_startYPosition, _startYPosition - ON_COLLSIION_MOVE_VALUE, ON_COLLISION_MOVE_DURATION, OnPunchUpdate).SetLoops(2, LoopType.Yoyo).SetEase(Ease.OutBack);
     }
     private void OnPunchUpdate(float value)
     {
